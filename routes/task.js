@@ -41,8 +41,8 @@ router.put('/', isAuthenticatedUser, catchAsyncErrors(async(req, res, next) => {
     res.status(200).json({ message: "Task updated successfully" });
 }))
 
-router.delete('/', isAuthenticatedUser, catchAsyncErrors(async(req, res, next) => {
-    const { id } = req.body;
+router.delete('/:id', isAuthenticatedUser, catchAsyncErrors(async(req, res, next) => {
+    const id = parseInt(req.params.id);
     const task = await Task.findOne({ where: { id } });
     if (!task)
         return next(new ErrorHandler(404, "Task not found"));
