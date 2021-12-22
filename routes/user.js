@@ -8,13 +8,51 @@ const router = require('express').Router();
 
 /**
  * @swagger
- * /users/register:
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - userName
+ *         - password
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The auto-generated id of the user
+ *         userName:
+ *           type: string
+ *           description: The unique user name of the user
+ *         password:
+ *           type: string
+ *           description: The password of the user
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: The User related API
+ */
+
+
+/**
+ * @swagger
+ * /api/user/register:
  *   post:
  *     summary: Register a new user
+ *     tags: [User]
  *     description: Register a new user
- *     response:
+ *     requestBody:
+ *       required: true
+ *       content:
+ *          application/json:
+ *              schema: 
+ *                  $ref: '#/components/schemas/User'
+ *     responses:
  *      '200':
  *          description: Successfully registered
+ *      '400':
+ *          description: Error in Message
  *       
  */
 
@@ -28,6 +66,27 @@ router.post('/register', isLoginedUser, catchAsyncErrors(async(req, res, next) =
     await User.create({ userName, password, });
     res.status(200).json({ message: 'Successfully registered' });
 }))
+
+/**
+ * @swagger
+ * /api/user/login:
+ *   post:
+ *     summary: Logins a registered user
+ *     tags: [User]
+ *     description: Logins a registered user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *          application/json:
+ *              schema: 
+ *                  $ref: '#/components/schemas/User'
+ *     responses:
+ *      '200':
+ *          description: Successfully Logged in
+ *      '400':
+ *          description: Error in Message
+ *       
+ */
 
 router.post('/login', isLoginedUser, catchAsyncErrors(async(req, res, next) => {
     if (!req.body.userName)
@@ -49,6 +108,20 @@ router.post('/login', isLoginedUser, catchAsyncErrors(async(req, res, next) => {
 
 }));
 
+/**
+ * @swagger
+ * /api/user/logout:
+ *   post:
+ *     summary: Logouts a logged in user
+ *     tags: [User]
+ *     description: Logouts a logged in user
+ *     responses:
+ *      '200':
+ *          description: Successfully Logged in
+ *      '400':
+ *          description: Error in Message
+ *       
+ */
 router.post('/logout', isAuthenticatedUser, catchAsyncErrors(async(req, res, next) => {
     req.logOut();
     res.status(200).json({ message: 'Successfully logged out' });
